@@ -1,51 +1,119 @@
 <!---
 {
-  "depends_on": [],
+  "id": "fb98095a-0ef6-465a-886a-e8b9e3cad876",
+  "depends_on": ["a8abf235-1dcb-4234-89bd-b380e96b5378"],
   "author": "Stephan Bökelmann",
-  "first_used": "2025-03-17",
-  "keywords": ["learning", "exercises", "education", "practice"]
+  "first_used": "2025-05-20",
+  "keywords": ["CopperSpice", "GUI", "C++", "lambda", "QColorDialog"]
 }
 --->
 
-# Learning Through Exercises
+# Color Picker with Lambda Function
 
 ## Introduction
-Learning by doing is one of the most effective methods to acquire new knowledge and skills. Rather than passively consuming information, actively engaging in problem-solving fosters deeper understanding and long-term retention. By working through structured exercises, students can grasp complex concepts in a more intuitive and applicable way. This approach is particularly beneficial in technical fields like programming, mathematics, and engineering.
+
+> In this exercise you will learn how to use multiple buttons in a CopperSpice application and how to invoke dialogs using lambda expressions. Furthermore, we will examine layout management using spacing and stretching.
+
+This example builds directly upon our minimal GUI setup. We expand the main window with two push buttons: one to trigger a color picker dialog and another to close the application.
+
+The key new element in this example is the use of a **lambda expression** within the `QObject::connect()` call. Lambda functions, introduced in C++11, provide a concise way to define anonymous functions inline. They are especially useful for GUI callbacks where you want to embed a small, one-off function directly where it's used.
+
+Here, we connect the `clicked` signal of a button to a lambda that opens a color selection dialog with a default color set to green. This eliminates the need to define a separate slot function or subclass, making the code cleaner and easier to maintain for simple actions.
+
+We also use layout elements like `addStretch()` and `addSpacing()` to control the visual alignment and padding between widgets, demonstrating basic layout customization.
 
 ### Further Readings and Other Sources
-- [The Importance of Practice in Learning](https://www.sciencedirect.com/science/article/pii/S036013151300062X)
-- "The Art of Learning" by Josh Waitzkin
-- [How to Learn Effectively: 5 Key Strategies](https://www.edutopia.org/article/5-research-backed-learning-strategies)
+
+* [CopperSpice Journal](https://journal.copperspice.com/)
+* [MaxClerkwell’s CopperSpice YouTube Playlist](https://www.youtube.com/playlist?list=PLwW_X4nvqRnxfwo7tXsC3Szu-gc4sv1mp)
+* [Empty CopperSpice Project Template](https://github.com/STEMgraph/empty_copperspice_project)
 
 ## Tasks
-1. **Write a Summary**: Summarize the concept of "learning by doing" in 3-5 sentences.
-2. **Example Identification**: List three examples from your own experience where learning through exercises helped you understand a topic better.
-3. **Create an Exercise**: Design a simple exercise for a topic of your choice that someone else could use to practice.
-4. **Follow an Exercise**: Find an online tutorial that includes exercises and complete at least two of them.
-5. **Modify an Existing Exercise**: Take a basic problem from a textbook or online course and modify it to make it slightly more challenging.
-6. **Pair Learning**: Explain a concept to a partner and guide them through an exercise without giving direct answers.
-7. **Review Mistakes**: Look at an exercise you've previously completed incorrectly. Identify why the mistake happened and how to prevent it in the future.
-8. **Time Challenge**: Set a timer for 10 minutes and try to solve as many simple exercises as possible on a given topic.
-9. **Self-Assessment**: Create a checklist to evaluate your own performance in completing exercises effectively.
-10. **Reflect on Progress**: Write a short paragraph on how this structured approach to exercises has influenced your learning.
 
-<details>
-  <summary>Tip for Task 5</summary>
-  Try making small adjustments first, such as increasing the difficulty slightly or adding an extra constraint.
-</details>
+### Task 1: Clone the project template
+
+To accelerate the process, I uploaded an empty project repository, based on the official CopperSpice Journal.
+Open a terminal and clone the starter project:
+
+```sh
+git clone https://github.com/STEMgraph/empty_copperspice_project.git ~/STEMgraph/experiments/copperspice/ColorPicker
+cd ~/STEMgraph/experiments/copperspice/ColorPicker
+```
+
+### Task 2: Add new source code
+
+The only file, that you need to modify right now is the `./src/main.cpp`. Open it in your favorite editor, e.g. using `vim`:
+
+```sh
+vim ./src/main.cpp
+```
+
+Replace the contents with the following:
+
+```cpp
+#include <QtCore>
+#include <QtGui>
+
+int main(int argc, char *argv[])
+{
+   QApplication app(argc, argv);
+
+   QWidget *mainWindow = new QWidget();
+   mainWindow->setMinimumSize(700, 350);
+
+   QPushButton *pb_1 = new QPushButton();
+   pb_1->setText("Show Colors");
+
+   QPushButton *pb_2 = new QPushButton();
+   pb_2->setText("Close");
+
+   QHBoxLayout *layout = new QHBoxLayout(mainWindow);
+   layout->addStretch();
+   layout->addWidget(pb_1);
+   layout->addSpacing(10);
+   layout->addWidget(pb_2);
+   layout->addStretch();
+
+   QObject::connect(pb_1, &QPushButton::clicked,
+         pb_1, []() { QColorDialog::getColor(Qt::green); });
+
+   QObject::connect(pb_2, &QPushButton::clicked,
+         mainWindow, &QWidget::close);
+
+   mainWindow->show();
+
+   return app.exec();
+}
+```
+
+Pay attention to the `::connect` method, that was already used in the minimal example. 
+This time we add two buttons. 
+Since the need to be somehow placed on the canvas of our window, we also want to add a layouting structure. 
+This is done by creating a new layout object, which takes the object `mainWindow` as a construction-parameter.
+The constructor of the layout will know, that it is supposed to live __inside__ of this `mainWindow`. 
+With the following lines, we are adding objects to this layout from left to right. 
+First a stretchable empty object, then our first button, a fixed spacing, the second button and another stretchable empty object. 
+
+### Task 3: Build and Run
+
+Follow the build instructions from the `README.md` in the template repository. Generally, the steps are:
+
+```sh
+cmake -B ./build -DCMAKE_PREFIX_PATH=$CS2_LIB_PREFIX
+cmake --build ./build
+./build/ColorPicker
+```
+
+Ensure the `$CS2_LIB_PREFIX` environment variable is correctly set to the CopperSpice installation path.
 
 ## Questions
-1. What are the main benefits of learning through exercises compared to passive learning?
-2. How do exercises improve long-term retention?
-3. Can you think of a subject where learning through exercises might be less effective? Why?
-4. What role does feedback play in learning through exercises?
-5. How can self-designed exercises improve understanding?
-6. Why is it beneficial to review past mistakes in exercises?
-7. How does explaining a concept to someone else reinforce your own understanding?
-8. What strategies can you use to stay motivated when practicing with exercises?
-9. How can timed challenges contribute to learning efficiency?
-10. How do exercises help bridge the gap between theory and practical application?
+
+1. What does the lambda in the `connect` call do, and how could you expand it to react to the color selected?
+2. Why is `pb_1` both the sender and receiver in the lambda connection?
+3. What happens if you remove the layout spacing or stretches?
+4. How could you reuse this layout code in a more complex application structure?
+5. Can lambda expressions capture variables from outside their scope? How would that be used in a GUI context?
 
 ## Advice
-Practice consistently and seek out diverse exercises that challenge different aspects of a topic. Combine exercises with reflection and feedback to maximize your learning efficiency. Don't hesitate to adapt exercises to fit your own needs and ensure that you're actively engaging with the material, rather than just going through the motions.
 
+Don't worry if lambda syntax or layout spacing feels a bit abstract — it becomes intuitive with practice. Focus on seeing the structure: input (button click) → response (action). Using lambdas keeps your GUI logic local and readable, but for anything more complex, consider defining a separate class. You now know enough to experiment confidently with multiple widgets and dynamic behavior. When you're ready, expand this example with labels, user input fields, or message boxes, or refer to the [next sheet on custom widget signals](#) for deeper practice.
