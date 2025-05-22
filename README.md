@@ -8,7 +8,7 @@
 }
 --->
 
-# Color Picker with Lambda Function
+# Color Picker with Lambda Function 
 
 ## Introduction 
 
