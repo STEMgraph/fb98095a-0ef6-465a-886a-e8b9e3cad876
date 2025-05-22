@@ -10,7 +10,7 @@
 
 # Color Picker with Lambda Function
 
-## Introduction
+## Introduction 
 
 > In this exercise you will learn how to use multiple buttons in a CopperSpice application and how to invoke dialogs using lambda expressions. Furthermore, we will examine layout management using spacing and stretching.
 
