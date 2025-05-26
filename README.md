@@ -61,23 +61,23 @@ int main(int argc, char *argv[])
    QWidget *mainWindow = new QWidget();
    mainWindow->setMinimumSize(700, 350);
 
-   QPushButton *pb_1 = new QPushButton();
-   pb_1->setText("Show Colors");
+   QPushButton *open_selector_button = new QPushButton();
+   open_selector_button->setText("Show Colors");
 
-   QPushButton *pb_2 = new QPushButton();
-   pb_2->setText("Close");
+   QPushButton *close_button = new QPushButton();
+   close_button->setText("Close");
 
    QHBoxLayout *layout = new QHBoxLayout(mainWindow);
    layout->addStretch();
-   layout->addWidget(pb_1);
+   layout->addWidget(open_selector_button);
    layout->addSpacing(10);
-   layout->addWidget(pb_2);
+   layout->addWidget(close_button);
    layout->addStretch();
 
-   QObject::connect(pb_1, &QPushButton::clicked,
-         pb_1, []() { QColorDialog::getColor(Qt::green); });
+   QObject::connect(open_selector_button, &QPushButton::clicked,
+         open_selector_button, []() { QColorDialog::getColor(Qt::green); });
 
-   QObject::connect(pb_2, &QPushButton::clicked,
+   QObject::connect(close_button, &QPushButton::clicked,
          mainWindow, &QWidget::close);
 
    mainWindow->show();
@@ -99,20 +99,76 @@ First a stretchable empty object, then our first button, a fixed spacing, the se
 Follow the build instructions from the `README.md` in the template repository. Generally, the steps are:
 
 ```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=$CS2_LIB_PREFIX
+cmake -B ./build -DCMAKE_PREFIX_PATH=$CS19_LIB_PREFIX
 cmake --build ./build
 ./build/ColorPicker
 ```
 
-Ensure the `$CS2_LIB_PREFIX` environment variable is correctly set to the CopperSpice installation path.
+Ensure the `$CS19_LIB_PREFIX` environment variable is correctly set to the CopperSpice installation path.
 
 ## Questions
 
 1. What does the lambda in the `connect` call do, and how could you expand it to react to the color selected?
-2. Why is `pb_1` both the sender and receiver in the lambda connection?
+2. Why is `color_selector_button` both the sender and receiver in the lambda connection?
 3. What happens if you remove the layout spacing or stretches?
 4. How could you reuse this layout code in a more complex application structure?
 5. Can lambda expressions capture variables from outside their scope? How would that be used in a GUI context?
+6. Describe, which feature the following code adds to the project?
+```cpp
+#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QTextEdit>
+#include <QColorDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+int main(int argc, char *argv[])
+{
+   QApplication app(argc, argv);
+
+   QWidget *mainWindow = new QWidget();
+   mainWindow->setMinimumSize(700, 350);
+
+   QPushButton *color_selector_button = new QPushButton("Select Color");
+   QPushButton *close_button = new QPushButton("Close");
+   QTextEdit *color_display = new QTextEdit();
+
+   QVBoxLayout *outerLayout = new QVBoxLayout(mainWindow);
+   QHBoxLayout *innerLayout = new QHBoxLayout();
+
+   outerLayout->addStretch();
+   outerLayout->addWidget(color_display);
+   outerLayout->addSpacing(10);
+   outerLayout->addLayout(innerLayout);
+   outerLayout->addStretch();
+
+   innerLayout->addStretch();
+   innerLayout->addWidget(color_selector_button);
+   innerLayout->addSpacing(10);
+   innerLayout->addWidget(close_button);
+   innerLayout->addStretch();
+
+   QColor activeColor = Qt::green;
+   color_display->setText(activeColor.name());
+   color_display->setReadOnly(true);
+
+   QObject::connect(color_selector_button, &QPushButton::clicked,
+         color_selector_button, [&activeColor, color_display]() {
+            QColor selectedColor = QColorDialog::getColor(activeColor);
+            if (selectedColor.isValid()) {
+               activeColor = selectedColor;
+               color_display->setText(activeColor.name());
+            } // else: do nothing
+         });
+
+   QObject::connect(close_button, &QPushButton::clicked,
+         mainWindow, &QWidget::close);
+
+   mainWindow->show();
+   return app.exec();
+}
+```
 
 ## Advice
 
