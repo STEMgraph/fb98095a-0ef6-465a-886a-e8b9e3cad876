@@ -1,6 +1,7 @@
 <!---
 {
   "id": "fb98095a-0ef6-465a-886a-e8b9e3cad876",
+  "teaches": "Color Picker with Lambda Function",
   "depends_on": [
     "58818b9a-23fe-4cf2-83f4-08bc3ff1cff5",
     "a8abf235-1dcb-4234-89bd-b380e96b5378"
